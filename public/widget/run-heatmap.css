@@ -1,0 +1,84 @@
+.rh-root {
+  --rh-bg: #ffffff;
+  --rh-text: #57606a;
+  --rh-border: #d0d7de;
+  --rh-level-0: #ebedf0;
+  --rh-level-1: #9be9a8;
+  --rh-level-2: #40c463;
+  --rh-level-3: #30a14e;
+  --rh-level-4: #216e39;
+  background: var(--rh-bg);
+  border: 1px solid var(--rh-border);
+  border-radius: 8px;
+  color: var(--rh-text);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 12px;
+  width: fit-content;
+}
+
+.rh-theme-dark {
+  --rh-bg: #0d1117;
+  --rh-text: #8b949e;
+  --rh-border: #30363d;
+  --rh-level-0: #161b22;
+  --rh-level-1: #0e4429;
+  --rh-level-2: #006d32;
+  --rh-level-3: #26a641;
+  --rh-level-4: #39d353;
+}
+
+.rh-grid {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.rh-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rh-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: var(--rh-level-0);
+}
+
+.rh-level-0 {
+  background: var(--rh-level-0);
+}
+
+.rh-level-1 {
+  background: var(--rh-level-1);
+}
+
+.rh-level-2 {
+  background: var(--rh-level-2);
+}
+
+.rh-level-3 {
+  background: var(--rh-level-3);
+}
+
+.rh-level-4 {
+  background: var(--rh-level-4);
+}
+
+.rh-legend {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  justify-content: flex-end;
+}
+
+.rh-error {
+  border: 1px solid #f1c0c0;
+  border-radius: 8px;
+  color: #b42318;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 12px;
+}

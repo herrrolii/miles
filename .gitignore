@@ -1,0 +1,9 @@
+node_modules/
+.env
+
+data/*
+!data/.gitkeep
+
+public/heatmap-data.json
+
+PLAN.md
