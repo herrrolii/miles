@@ -13,6 +13,8 @@ Files:
 - Public derived data: `docs/heatmap-data.json`
 - Widget assets: `docs/widget/run-heatmap.js` and `docs/widget/run-heatmap.css`
 
+`docs/` is the canonical example site in this repo (demo + integration reference).
+
 ## Local setup (one time)
 
 1. Create a Strava app: <https://www.strava.com/settings/api>
@@ -68,11 +70,19 @@ After that, it auto-updates on schedule.
 
 ## Embed snippet
 
+For this repo's `docs/` layout:
+
 ```html
 <link rel="stylesheet" href="/widget/run-heatmap.css" />
 <run-heatmap data-url="/heatmap-data.json" theme="light"></run-heatmap>
 <script src="/widget/run-heatmap.js"></script>
 ```
+
+If your own website uses a different static folder, keep the same relative pattern:
+
+- `.../widget/run-heatmap.js`
+- `.../widget/run-heatmap.css`
+- `.../heatmap-data.json`
 
 Manual mount option:
 
@@ -87,10 +97,7 @@ Manual mount option:
 </script>
 ```
 
-See:
-
-- `examples/embed-basic.html` (basic usage)
-- `docs/index.html` (public demo page using `docs/heatmap-data.json`)
+Canonical integration example: `docs/index.html`.
 
 ## GitHub Pages demo for this repo
 
