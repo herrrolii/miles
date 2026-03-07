@@ -2,76 +2,83 @@
 
 Generate a GitHub-style running contribution heatmap from your own Strava data.
 
-This project has two parts:
+## How it works
 
-- private sync scripts that pull Strava activities and write derived daily stats
-- public widget files that render the heatmap from JSON
+- Private sync script pulls Strava runs and writes daily aggregates.
+- Public widget renders from JSON.
 
-## What this stores
+Files:
 
-- Private (gitignored): `data/strava-tokens.json`
-- Public (safe derived output): `public/heatmap-data.json`
+- Private token storage: `data/strava-tokens.json` (gitignored)
+- Public derived data: `docs/heatmap-data.json`
+- Widget assets: `docs/widget/run-heatmap.js` and `docs/widget/run-heatmap.css`
 
-No raw activity stream is published. The public JSON only includes per-day aggregates.
+## Local setup (one time)
 
-## 1. Strava app setup
-
-1. Create a Strava developer app: <https://www.strava.com/settings/api>
-2. Set callback domain to `localhost` for local use.
-3. Put credentials in `.env`:
+1. Create a Strava app: <https://www.strava.com/settings/api>
+2. Set callback domain to `localhost`
+3. Create `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-Required values:
+Required `.env` vars:
 
 - `STRAVA_CLIENT_ID`
 - `STRAVA_CLIENT_SECRET`
 - `STRAVA_REDIRECT_URI` (example: `http://localhost:4242/callback`)
 
-## 2. Authorize once
+4. Authorize once:
 
 ```bash
 npm run authorize:strava
 ```
 
-The script prints an authorization URL.
-
-1. Open it in your browser
-2. Approve access
-3. Copy the `code` query param from the callback URL
-4. Paste it back into the terminal
-
-Tokens are saved to `data/strava-tokens.json`.
-
-## 3. Sync manually
+5. Sync once:
 
 ```bash
 npm run sync:strava
 ```
 
-This refreshes tokens when needed, fetches running activities from the last 365 days, aggregates by day, and writes:
+## Easiest auto-update flow (recommended)
 
-- `public/heatmap-data.json`
+Use this repo (or your website repo) with the included workflow:
 
-## 4. Embed widget
+- `.github/workflows/sync-heatmap.yml`
 
-Include these files:
+It runs every 6 hours, updates `docs/heatmap-data.json`, and commits it automatically.
 
-- `public/widget/run-heatmap.css`
-- `public/widget/run-heatmap.js`
+### One-time setup
 
-Then embed:
+1. Run local authorize once and get refresh token:
 
-```html
-<run-heatmap data-url="/heatmap-data.json" theme="light"></run-heatmap>
+```bash
+node -p "require('./data/strava-tokens.json').refresh_token"
 ```
 
-Or mount manually:
+2. In GitHub repo settings, add these Actions secrets:
+- `STRAVA_CLIENT_ID`
+- `STRAVA_CLIENT_SECRET`
+- `STRAVA_REFRESH_TOKEN`
+
+3. Trigger workflow once manually (`Actions` -> `Sync Strava Heatmap` -> `Run workflow`).
+
+After that, it auto-updates on schedule.
+
+## Embed snippet
+
+```html
+<link rel="stylesheet" href="/widget/run-heatmap.css" />
+<run-heatmap data-url="/heatmap-data.json" theme="light"></run-heatmap>
+<script src="/widget/run-heatmap.js"></script>
+```
+
+Manual mount option:
 
 ```html
 <div id="heatmap"></div>
+<script src="/widget/run-heatmap.js"></script>
 <script>
   RunHeatmap.mount(document.getElementById("heatmap"), {
     dataUrl: "/heatmap-data.json",
@@ -80,14 +87,23 @@ Or mount manually:
 </script>
 ```
 
-See [examples/embed-basic.html](examples/embed-basic.html).
+See:
 
-## 5. Cron example
+- `examples/embed-basic.html` (basic usage)
+- `docs/index.html` (public demo page using `docs/heatmap-data.json`)
 
-Run sync every 6 hours:
+## GitHub Pages demo for this repo
 
-```cron
-0 */6 * * * cd /path/to/running-heatmap && npm run sync:strava >> /tmp/running-heatmap.log 2>&1
-```
+`docs/index.html` renders the real tracked file: `docs/heatmap-data.json`.
 
-The widget only reads `public/heatmap-data.json`, so no runtime backend is needed for display.
+To publish:
+
+1. `Settings` -> `Pages`
+2. Source: `Deploy from a branch`
+3. Branch: `main` and folder `/docs`
+
+## Hosting notes
+
+- Static hosting is enough for rendering.
+- Strava sync still needs a private scheduled runner (GitHub Actions, cron on VPS, etc.).
+- For Vercel/Cloudflare/Netlify with GitHub integration, workflow commits trigger redeploy automatically.

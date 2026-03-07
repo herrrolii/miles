@@ -4,6 +4,4 @@ node_modules/
 data/*
 !data/.gitkeep
 
-public/heatmap-data.json
-
 PLAN.md

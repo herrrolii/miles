@@ -12,7 +12,7 @@ async function main() {
   const clientId = requireEnv("STRAVA_CLIENT_ID");
   const clientSecret = requireEnv("STRAVA_CLIENT_SECRET");
   const tokenFilePath = path.join(projectRoot, "data", "strava-tokens.json");
-  const outputFilePath = path.join(projectRoot, "public", "heatmap-data.json");
+  const outputFilePath = path.join(projectRoot, "docs", "heatmap-data.json");
 
   console.log("Starting Strava sync...");
   const runs = await fetchRunActivities({
