@@ -9,95 +9,104 @@ This repo is split into two parts:
 2. `consumer-example/`  
    Minimal website-side example showing how to render that JSON at runtime.
 
-## Folder roles
+## Instructions
 
-```text
-.
-├── producer/
-│   ├── .env.example
-│   ├── data/                  # private token storage (gitignored)
-│   ├── dist/
-│   │   └── heatmap-data.json  # generated public data
-│   ├── scripts/               # authorize + sync commands
-│   └── src/                   # sync/aggregation implementation
-└── consumer-example/
-    ├── index.html
-    ├── widget/
-    │   ├── run-heatmap.js
-    │   └── run-heatmap.css
-    └── README.md
+### 1. Create your Strava app
+
+1. Go to <https://www.strava.com/settings/api>.
+2. Create a new app.
+3. Set callback domain to `localhost`.
+4. Save your:
+- `Client ID`
+- `Client Secret`
+
+### 2. Clone this repo and install dependencies
+
+```bash
+git clone <your-repo-url>
+cd <repo-folder>
+npm install
 ```
 
-## Data producer flow
+### 3. Configure environment variables
 
-1. Authorize once with Strava
-2. Run sync
-3. Generate/update `producer/dist/heatmap-data.json`
-4. Host that JSON publicly
-5. Consumer website fetches and renders it at runtime
-
-## Setup (producer)
-
-1. Create Strava app: <https://www.strava.com/settings/api>
-2. Set callback domain to `localhost`
-3. Create `.env` (repo root or `producer/.env`):
+Create a local `.env` file:
 
 ```bash
 cp producer/.env.example .env
 ```
 
-4. Authorize:
+Then fill in:
+
+- `STRAVA_CLIENT_ID`
+- `STRAVA_CLIENT_SECRET`
+- `STRAVA_REDIRECT_URI` (example: `http://localhost:4242/callback`)
+
+### 4. Authorize Strava (one-time setup)
+
+Run:
 
 ```bash
 npm run authorize:strava
 ```
 
-5. Sync:
+The script will:
+
+1. Print an authorization URL.
+2. Ask you to open it and approve access.
+3. Ask you to paste back the `code` from the callback URL.
+
+It will save private tokens to:
+
+- `producer/data/strava-tokens.json`
+
+### 5. Generate your heatmap JSON
+
+Run:
 
 ```bash
 npm run sync:strava
 ```
 
-Output:
+This creates/updates:
+
 - `producer/dist/heatmap-data.json`
 
-## Mode A: GitHub repo + GitHub Actions
+### 6. Use this JSON in your website
 
-Included workflow:
-- `.github/workflows/sync-heatmap.yml`
+Your website should read the generated JSON at runtime.
 
-It runs every 6 hours, syncs Strava, and commits:
-- `producer/dist/heatmap-data.json`
+Example web component usage:
 
-Required repo secrets:
-- `STRAVA_CLIENT_ID`
-- `STRAVA_CLIENT_SECRET`
-- `STRAVA_REFRESH_TOKEN`
+```html
+<link rel="stylesheet" href="/widget/run-heatmap.css" />
+<run-heatmap data-url="https://your-data-host.example/heatmap-data.json"></run-heatmap>
+<script src="/widget/run-heatmap.js"></script>
+```
 
-## Mode B: Run producer elsewhere (VPS/local/server)
+You can use `consumer-example/` as a reference for what to copy into your website repo.
 
-Run cron in this repo:
+## Automating Sync
+
+### Option A: Cron job (local machine / VPS / server)
+
+Run every 6 hours:
 
 ```cron
 0 */6 * * * cd /path/to/repo && npm run sync:strava >> /tmp/running-heatmap.log 2>&1
 ```
 
-Then host `producer/dist/heatmap-data.json` anywhere (VPS static path, object storage, CDN, etc).
+### Option B: Public GitHub repo + GitHub Actions
 
-## Separation of concerns
+1. Put the producer code in a public GitHub repo.
+2. Keep the workflow file:
+- `.github/workflows/sync-heatmap.yml`
+3. In GitHub repo settings, add these secrets:
+- `STRAVA_CLIENT_ID`
+- `STRAVA_CLIENT_SECRET`
+- `STRAVA_REFRESH_TOKEN`
+4. Run the workflow once manually from the Actions tab.
+5. The workflow will keep updating:
+- `producer/dist/heatmap-data.json`
 
-- `producer/` = data producer
-- consumer website = data consumer
-
-Consumer site fetches JSON at runtime, so it does not need rebuilds for each run update.
-
-## Consumer-side integration example
-
-See:
-- `consumer-example/`
-
-That folder contains:
-- website HTML
-- widget files to place in website static assets
-
-Edit the `data-url` attribute in `consumer-example/index.html` and set your real hosted JSON URL.
+Then use the public URL of that JSON directly in your website component `data-url`.
