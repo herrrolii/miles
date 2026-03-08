@@ -38,8 +38,8 @@ cp producer/.env.example .env
 
 Then fill in:
 
-- `STRAVA_CLIENT_ID`
-- `STRAVA_CLIENT_SECRET`
+- `STRAVA_CLIENT_ID` (from your Strava app page)
+- `STRAVA_CLIENT_SECRET` (from your Strava app page)
 - `STRAVA_REDIRECT_URI` (example: `http://localhost:4242/callback`)
 
 ### 4. Authorize Strava (one-time setup)
@@ -58,7 +58,7 @@ The script will:
 
 It will save private tokens to:
 
-- `producer/data/strava-tokens.json`
+- `producer/data/strava-tokens.json` (gitignored)
 
 ### 5. Generate your heatmap JSON
 
@@ -107,10 +107,10 @@ Make sure that hosted `heatmap-data.json` location is accessible by your website
 1. Put the producer code in a public GitHub repo.
 2. Keep the workflow file:
 - `.github/workflows/sync-heatmap.yml`
-3. In GitHub repo settings, add these secrets:
-- `STRAVA_CLIENT_ID`
-- `STRAVA_CLIENT_SECRET`
-- `STRAVA_REFRESH_TOKEN`
+3. In GitHub repo settings, add these **Repository Secrets**:
+- `STRAVA_CLIENT_ID` (same value you put in `.env`, from your Strava app page)
+- `STRAVA_CLIENT_SECRET` (same value you put in `.env`, from your Strava app page)
+- `STRAVA_REFRESH_TOKEN` (from `producer/data/strava-tokens.json`, generated after authorization; this file is gitignored)
 4. Run the workflow once manually from the Actions tab.
 5. The workflow will keep updating:
 - `producer/dist/heatmap-data.json`
