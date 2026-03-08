@@ -6,13 +6,15 @@ const { fetchRunActivities } = require("../src/strava/api");
 const { buildHeatmapPayload } = require("../src/strava/transform");
 
 async function main() {
-  const projectRoot = path.resolve(__dirname, "..");
-  loadEnvFile(path.join(projectRoot, ".env"));
+  const producerRoot = path.resolve(__dirname, "..");
+  const repoRoot = path.resolve(producerRoot, "..");
+  loadEnvFile(path.join(repoRoot, ".env"));
+  loadEnvFile(path.join(producerRoot, ".env"));
 
   const clientId = requireEnv("STRAVA_CLIENT_ID");
   const clientSecret = requireEnv("STRAVA_CLIENT_SECRET");
-  const tokenFilePath = path.join(projectRoot, "data", "strava-tokens.json");
-  const outputFilePath = path.join(projectRoot, "docs", "heatmap-data.json");
+  const tokenFilePath = path.join(producerRoot, "data", "strava-tokens.json");
+  const outputFilePath = path.join(producerRoot, "dist", "heatmap-data.json");
 
   console.log("Starting Strava sync...");
   const runs = await fetchRunActivities({

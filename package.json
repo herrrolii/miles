@@ -2,9 +2,9 @@
   "name": "running-heatmap",
   "version": "0.1.0",
   "private": true,
-  "description": "Self-hosted Strava running heatmap generator and embeddable widget",
+  "description": "Personal Strava running-data producer + website consumer example",
   "scripts": {
-    "authorize:strava": "node scripts/authorize-strava.js",
-    "sync:strava": "node scripts/sync-strava.js"
+    "authorize:strava": "node producer/scripts/authorize-strava.js",
+    "sync:strava": "node producer/scripts/sync-strava.js"
   }
 }

@@ -1,7 +1,8 @@
 node_modules/
 .env
+producer/.env
 
-data/*
-!data/.gitkeep
+producer/data/*
+!producer/data/.gitkeep
 
 PLAN.md

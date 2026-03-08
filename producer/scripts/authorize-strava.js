@@ -33,13 +33,15 @@ function ask(question) {
 }
 
 async function main() {
-  const projectRoot = path.resolve(__dirname, "..");
-  loadEnvFile(path.join(projectRoot, ".env"));
+  const producerRoot = path.resolve(__dirname, "..");
+  const repoRoot = path.resolve(producerRoot, "..");
+  loadEnvFile(path.join(repoRoot, ".env"));
+  loadEnvFile(path.join(producerRoot, ".env"));
 
   const clientId = requireEnv("STRAVA_CLIENT_ID");
   const clientSecret = requireEnv("STRAVA_CLIENT_SECRET");
   const redirectUri = process.env.STRAVA_REDIRECT_URI || "http://localhost:4242/callback";
-  const tokenFilePath = path.join(projectRoot, "data", "strava-tokens.json");
+  const tokenFilePath = path.join(producerRoot, "data", "strava-tokens.json");
 
   const authorizationUrl = createAuthorizationUrl({
     clientId,

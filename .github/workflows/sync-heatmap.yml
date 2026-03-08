@@ -39,8 +39,8 @@ jobs:
         env:
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         run: |
-          mkdir -p data
-          cat > data/strava-tokens.json <<EOF
+          mkdir -p producer/data
+          cat > producer/data/strava-tokens.json <<EOF
           {
             "refresh_token": "$STRAVA_REFRESH_TOKEN",
             "access_token": "placeholder",
@@ -56,7 +56,7 @@ jobs:
 
       - name: Commit updated heatmap data
         run: |
-          git add docs/heatmap-data.json
+          git add producer/dist/heatmap-data.json
 
           if git diff --cached --quiet; then
             echo "No heatmap changes to commit."

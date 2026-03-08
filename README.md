@@ -1,116 +1,105 @@
-# Running Heatmap (Strava, self-hosted)
+# Miles
 
-Generate a GitHub-style running contribution heatmap from your own Strava data.
+A GitHub-style contribution heatmap widget for your Strava running data.  
+  
+This repo is split into two parts:
 
-## How it works
+1. `producer/`  
+   Strava auth + sync + aggregation. Generates `producer/dist/heatmap-data.json`.
+2. `consumer-example/`  
+   Minimal website-side example showing how to render that JSON at runtime.
 
-- Private sync script pulls Strava runs and writes daily aggregates.
-- Public widget renders from JSON.
+## Folder roles
 
-Files:
-
-- Private token storage: `data/strava-tokens.json` (gitignored)
-- Public derived data: `docs/heatmap-data.json`
-- Widget assets: `docs/widget/run-heatmap.js` and `docs/widget/run-heatmap.css`
-
-`docs/` is the canonical example site in this repo (demo + integration reference).
-
-## Local setup (one time)
-
-1. Create a Strava app: <https://www.strava.com/settings/api>
-2. Set callback domain to `localhost`
-3. Create `.env`:
-
-```bash
-cp .env.example .env
+```text
+.
+├── producer/
+│   ├── .env.example
+│   ├── data/                  # private token storage (gitignored)
+│   ├── dist/
+│   │   └── heatmap-data.json  # generated public data
+│   ├── scripts/               # authorize + sync commands
+│   └── src/                   # sync/aggregation implementation
+└── consumer-example/
+    ├── index.html
+    ├── app.js
+    ├── widget/
+    │   ├── run-heatmap.js
+    │   └── run-heatmap.css
+    └── README.md
 ```
 
-Required `.env` vars:
+## Data producer flow
 
-- `STRAVA_CLIENT_ID`
-- `STRAVA_CLIENT_SECRET`
-- `STRAVA_REDIRECT_URI` (example: `http://localhost:4242/callback`)
+1. Authorize once with Strava
+2. Run sync
+3. Generate/update `producer/dist/heatmap-data.json`
+4. Host that JSON publicly
+5. Consumer website fetches and renders it at runtime
 
-4. Authorize once:
+## Setup (producer)
+
+1. Create Strava app: <https://www.strava.com/settings/api>
+2. Set callback domain to `localhost`
+3. Create `.env` (repo root or `producer/.env`):
+
+```bash
+cp producer/.env.example .env
+```
+
+4. Authorize:
 
 ```bash
 npm run authorize:strava
 ```
 
-5. Sync once:
+5. Sync:
 
 ```bash
 npm run sync:strava
 ```
 
-## Easiest auto-update flow (recommended)
+Output:
+- `producer/dist/heatmap-data.json`
 
-Use this repo (or your website repo) with the included workflow:
+## Mode A: GitHub repo + GitHub Actions
 
+Included workflow:
 - `.github/workflows/sync-heatmap.yml`
 
-It runs every 6 hours, updates `docs/heatmap-data.json`, and commits it automatically.
+It runs every 6 hours, syncs Strava, and commits:
+- `producer/dist/heatmap-data.json`
 
-### One-time setup
-
-1. Run local authorize once and get refresh token:
-
-```bash
-node -p "require('./data/strava-tokens.json').refresh_token"
-```
-
-2. In GitHub repo settings, add these Actions secrets:
+Required repo secrets:
 - `STRAVA_CLIENT_ID`
 - `STRAVA_CLIENT_SECRET`
 - `STRAVA_REFRESH_TOKEN`
 
-3. Trigger workflow once manually (`Actions` -> `Sync Strava Heatmap` -> `Run workflow`).
+## Mode B: Run producer elsewhere (VPS/local/server)
 
-After that, it auto-updates on schedule.
+Run cron in this repo:
 
-## Embed snippet
-
-For this repo's `docs/` layout:
-
-```html
-<link rel="stylesheet" href="/widget/run-heatmap.css" />
-<run-heatmap data-url="/heatmap-data.json" theme="light"></run-heatmap>
-<script src="/widget/run-heatmap.js"></script>
+```cron
+0 */6 * * * cd /path/to/repo && npm run sync:strava >> /tmp/running-heatmap.log 2>&1
 ```
 
-If your own website uses a different static folder, keep the same relative pattern:
+Then host `producer/dist/heatmap-data.json` anywhere (VPS static path, object storage, CDN, etc).
 
-- `.../widget/run-heatmap.js`
-- `.../widget/run-heatmap.css`
-- `.../heatmap-data.json`
+## Separation of concerns
 
-Manual mount option:
+- `producer/` = data producer
+- consumer website = data consumer
 
-```html
-<div id="heatmap"></div>
-<script src="/widget/run-heatmap.js"></script>
-<script>
-  RunHeatmap.mount(document.getElementById("heatmap"), {
-    dataUrl: "/heatmap-data.json",
-    theme: "light"
-  });
-</script>
-```
+Consumer site fetches JSON at runtime, so it does not need rebuilds for each run update.
 
-Canonical integration example: `docs/index.html`.
+## Consumer-side integration example
 
-## GitHub Pages demo for this repo
+See:
+- `consumer-example/`
 
-`docs/index.html` renders the real tracked file: `docs/heatmap-data.json`.
+That folder contains:
+- website HTML
+- small runtime JS
+- widget files to place in website static assets
 
-To publish:
-
-1. `Settings` -> `Pages`
-2. Source: `Deploy from a branch`
-3. Branch: `main` and folder `/docs`
-
-## Hosting notes
-
-- Static hosting is enough for rendering.
-- Strava sync still needs a private scheduled runner (GitHub Actions, cron on VPS, etc.).
-- For Vercel/Cloudflare/Netlify with GitHub integration, workflow commits trigger redeploy automatically.
+Edit `consumer-example/app.js` and set your real hosted JSON URL.
