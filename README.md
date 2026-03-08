@@ -76,6 +76,11 @@ This creates/updates:
 
 Your website should read the generated JSON at runtime.
 
+1. Copy the contents of `consumer-example/widget/` into your website project's static assets so they are served as:
+- `/widget/run-heatmap.js`
+- `/widget/run-heatmap.css`
+2. Paste this snippet into the target HTML page:
+
 Example web component usage:
 
 ```html
@@ -84,17 +89,18 @@ Example web component usage:
 <script src="/widget/run-heatmap.js"></script>
 ```
 
-You can use `consumer-example/` as a reference for what to copy into your website repo.
+You can check `consumer-example/` as a complete reference example.
 
 ## Automating Sync
 
+If you run `npm run sync:strava` only once, your JSON will stay static.
+If you want it to auto-update, use one of these approaches:
+
 ### Option A: Cron job (local machine / VPS / server)
 
-Run every 6 hours:
-
-```cron
-0 */6 * * * cd /path/to/repo && npm run sync:strava >> /tmp/running-heatmap.log 2>&1
-```
+Set up a cron job in whatever environment is running your producer code.
+That cron job should run `npm run sync:strava` on a schedule so `heatmap-data.json` keeps updating from that host.
+Make sure that hosted `heatmap-data.json` location is accessible by your website at runtime (same domain or an allowed cross-origin URL).
 
 ### Option B: Public GitHub repo + GitHub Actions
 
@@ -109,4 +115,5 @@ Run every 6 hours:
 5. The workflow will keep updating:
 - `producer/dist/heatmap-data.json`
 
-Then use the public URL of that JSON directly in your website component `data-url`.
+Then use the direct public file URL of that JSON in your website component `data-url`.
+For GitHub, this is typically the file URL from the **Raw** view for `producer/dist/heatmap-data.json` (or your GitHub Pages file URL if you publish it there).
