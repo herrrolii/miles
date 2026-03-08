@@ -9,7 +9,7 @@ This folder shows what a separate website repo might look like when consuming he
   - `/widget/run-heatmap.css`
 - Your website fetches runtime data from a hosted JSON URL.
 
-In `app.js`, replace:
+In `index.html`, replace:
 
 - `https://your-data-host.example/heatmap-data.json`
 

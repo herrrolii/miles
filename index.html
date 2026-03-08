@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Miles Preview</title>
+    <link rel="stylesheet" href="./consumer-example/widget/run-heatmap.css" />
+    <style>
+      body {
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 24px;
+      }
+
+      main {
+        max-width: 900px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Miles Preview</h1>
+      <p>
+        This preview reads from <code>producer/dist/heatmap-data.json</code> and renders using the widget in
+        <code>consumer-example/widget</code>.
+      </p>
+      <run-heatmap data-url="./producer/dist/heatmap-data.json" theme="light"></run-heatmap>
+    </main>
+    <script src="./consumer-example/widget/run-heatmap.js"></script>
+  </body>
+</html>

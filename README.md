@@ -22,7 +22,6 @@ This repo is split into two parts:
 │   └── src/                   # sync/aggregation implementation
 └── consumer-example/
     ├── index.html
-    ├── app.js
     ├── widget/
     │   ├── run-heatmap.js
     │   └── run-heatmap.css
@@ -99,7 +98,6 @@ See:
 
 That folder contains:
 - website HTML
-- small runtime JS
 - widget files to place in website static assets
 
-Edit `consumer-example/app.js` and set your real hosted JSON URL.
+Edit the `data-url` attribute in `consumer-example/index.html` and set your real hosted JSON URL.
