@@ -457,23 +457,43 @@
       scroll.appendChild(scrollContent);
       graphWrap.appendChild(scroll);
 
-      var yearsNav = document.createElement("div");
+      var yearsNav = document.createElement("nav");
       yearsNav.className = "rh-years";
+      yearsNav.setAttribute("aria-label", "Year selector");
 
-      function makeYearButton(label, isActive, onClick) {
+      var yearList = document.createElement("ul");
+      yearList.className = "rh-year-list";
+      yearsNav.appendChild(yearList);
+
+      function makeYearButton(label, isActive, onClick, ariaLabel) {
+        var item = document.createElement("li");
+        item.className = "rh-year-item";
+
         var button = document.createElement("button");
         button.type = "button";
         button.className = "rh-year" + (isActive ? " is-active" : "");
         button.textContent = label;
+        if (ariaLabel) {
+          button.setAttribute("aria-label", ariaLabel);
+        }
         button.setAttribute("aria-pressed", isActive ? "true" : "false");
+        if (isActive) {
+          button.setAttribute("aria-current", "true");
+        }
         button.addEventListener("click", onClick);
-        yearsNav.appendChild(button);
+        item.appendChild(button);
+        yearList.appendChild(item);
       }
 
-      makeYearButton("Last 12 months", state.view.type === "last12Months", function () {
-        state.view = { type: "last12Months" };
-        renderView();
-      });
+      makeYearButton(
+        "-",
+        state.view.type === "last12Months",
+        function () {
+          state.view = { type: "last12Months" };
+          renderView();
+        },
+        "Last 12 months"
+      );
 
       years.forEach(function (year) {
         makeYearButton(
@@ -485,6 +505,10 @@
           }
         );
       });
+
+      if (years.length > 5) {
+        yearList.classList.add("is-scrollable");
+      }
 
       var card = document.createElement("div");
       card.className = "rh-card";
