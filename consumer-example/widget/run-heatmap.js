@@ -391,13 +391,16 @@
       var root = document.createElement("div");
       root.className = "rh-root rh-theme-" + theme;
 
+      var layout = document.createElement("div");
+      layout.className = "rh-layout";
+
+      var content = document.createElement("div");
+      content.className = "rh-content";
+
       var header = document.createElement("h2");
       header.className = "rh-title";
       header.textContent = formatSummary(viewRange, visibleDays);
-      root.appendChild(header);
-
-      var main = document.createElement("div");
-      main.className = "rh-main";
+      content.appendChild(header);
 
       var graphWrap = document.createElement("div");
       graphWrap.className = "rh-graph-wrap";
@@ -454,9 +457,6 @@
       scroll.appendChild(scrollContent);
       graphWrap.appendChild(scroll);
 
-      renderLegend(graphWrap);
-      main.appendChild(graphWrap);
-
       var yearsNav = document.createElement("div");
       yearsNav.className = "rh-years";
 
@@ -465,6 +465,7 @@
         button.type = "button";
         button.className = "rh-year" + (isActive ? " is-active" : "");
         button.textContent = label;
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
         button.addEventListener("click", onClick);
         yearsNav.appendChild(button);
       }
@@ -485,8 +486,15 @@
         );
       });
 
-      main.appendChild(yearsNav);
-      root.appendChild(main);
+      var card = document.createElement("div");
+      card.className = "rh-card";
+      card.appendChild(graphWrap);
+      renderLegend(card);
+      content.appendChild(card);
+
+      layout.appendChild(content);
+      layout.appendChild(yearsNav);
+      root.appendChild(layout);
 
       var tooltip = createTooltip(root);
       root.addEventListener("mousemove", function (event) {
