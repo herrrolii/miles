@@ -16,9 +16,11 @@
   color: var(--rh-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji";
+  box-sizing: border-box;
   padding: 12px;
   position: relative;
-  width: fit-content;
+  max-width: 100%;
+  width: 100%;
 }
 
 .rh-theme-dark {
@@ -49,7 +51,23 @@
 }
 
 .rh-graph-wrap {
+  flex: 0 1 auto;
   min-width: 0;
+}
+
+.rh-scroll {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  vertical-align: top;
+}
+
+.rh-scroll-content {
+  display: inline-block;
+  min-width: max-content;
 }
 
 .rh-months {
@@ -60,7 +78,7 @@
   height: 12px;
   margin-left: 22px;
   margin-bottom: 4px;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .rh-month {
@@ -100,8 +118,8 @@
 .rh-grid {
   display: flex;
   gap: 2px;
-  overflow-x: auto;
-  padding-bottom: 6px;
+  overflow: visible;
+  padding-bottom: 0;
 }
 
 .rh-week {

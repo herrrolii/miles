@@ -402,6 +402,12 @@
       var graphWrap = document.createElement("div");
       graphWrap.className = "rh-graph-wrap";
 
+      var scroll = document.createElement("div");
+      scroll.className = "rh-scroll";
+
+      var scrollContent = document.createElement("div");
+      scrollContent.className = "rh-scroll-content";
+
       var months = document.createElement("div");
       months.className = "rh-months";
       monthLabels.forEach(function (label) {
@@ -410,7 +416,7 @@
         month.textContent = label;
         months.appendChild(month);
       });
-      graphWrap.appendChild(months);
+      scrollContent.appendChild(months);
 
       var graphBody = document.createElement("div");
       graphBody.className = "rh-graph-body";
@@ -444,7 +450,9 @@
         grid.appendChild(weekEl);
       });
       graphBody.appendChild(grid);
-      graphWrap.appendChild(graphBody);
+      scrollContent.appendChild(graphBody);
+      scroll.appendChild(scrollContent);
+      graphWrap.appendChild(scroll);
 
       renderLegend(graphWrap);
       main.appendChild(graphWrap);
