@@ -64,7 +64,7 @@
   display: block;
   flex-shrink: 0;
   position: sticky;
-  top: 74px;
+  top: var(--rh-years-sticky-top, 74px);
   width: 96px;
 }
 
@@ -82,7 +82,6 @@
 }
 
 .rh-year-list.is-scrollable {
-  max-height: 198px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 2px;
