@@ -55,6 +55,7 @@
 .rh-months {
   color: var(--rh-muted);
   display: flex;
+  gap: 2px;
   font-size: 10px;
   height: 12px;
   margin-left: 22px;
@@ -63,8 +64,8 @@
 }
 
 .rh-month {
-  flex: 0 0 14px;
-  min-width: 14px;
+  flex: 0 0 10px;
+  min-width: 10px;
   white-space: nowrap;
 }
 

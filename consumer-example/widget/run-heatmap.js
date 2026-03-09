@@ -182,44 +182,96 @@
     };
   }
 
-  function findFirstInRangeDay(week) {
-    for (var i = 0; i < week.length; i += 1) {
-      if (week[i].inRange) return week[i];
-    }
-    return null;
+  function getMonthKey(day) {
+    return day.date.slice(0, 7);
   }
 
-  function getMonthLabel(day) {
-    var date = parseIsoDate(day.date);
+  function getMonthLabel(monthKey) {
+    var date = parseIsoDate(monthKey + "-01");
     if (!date) return "";
     return MONTH_FORMATTER.format(date);
   }
 
-  function buildMonthLabels(weeks) {
-    var labels = new Array(weeks.length).fill("");
+  function collectVisibleMonthKeys(weeks) {
+    var seen = new Set();
+    var keys = [];
 
     for (var i = 0; i < weeks.length; i += 1) {
       var week = weeks[i];
-      var firstInRange = findFirstInRangeDay(week);
-      if (!firstInRange) continue;
-
-      var firstDate = parseIsoDate(firstInRange.date);
-      if (!firstDate) continue;
-
-      if (i === 0) {
-        labels[i] = getMonthLabel(firstInRange);
-        continue;
-      }
-
       for (var j = 0; j < week.length; j += 1) {
         var day = week[j];
         if (!day.inRange) continue;
-        var date = parseIsoDate(day.date);
-        if (!date) continue;
-        if (date.getUTCDate() === 1) {
-          labels[i] = getMonthLabel(day);
+        var key = getMonthKey(day);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        keys.push(key);
+      }
+    }
+
+    return keys;
+  }
+
+  function weekIsExclusiveForMonth(week, monthKey) {
+    for (var i = 0; i < week.length; i += 1) {
+      if (getMonthKey(week[i]) !== monthKey) return false;
+    }
+    return true;
+  }
+
+  function weekContainsMonthStart(week, monthKey) {
+    for (var i = 0; i < week.length; i += 1) {
+      var day = week[i];
+      if (!day.inRange) continue;
+      if (getMonthKey(day) !== monthKey) continue;
+      if (day.date.slice(8, 10) === "01") return true;
+    }
+    return false;
+  }
+
+  function weekContainsMonth(week, monthKey) {
+    for (var i = 0; i < week.length; i += 1) {
+      var day = week[i];
+      if (!day.inRange) continue;
+      if (getMonthKey(day) === monthKey) return true;
+    }
+    return false;
+  }
+
+  function buildMonthLabels(weeks) {
+    var labels = new Array(weeks.length).fill("");
+    var monthKeys = collectVisibleMonthKeys(weeks);
+
+    for (var m = 0; m < monthKeys.length; m += 1) {
+      var monthKey = monthKeys[m];
+      var labelIndex = -1;
+
+      for (var i = 0; i < weeks.length; i += 1) {
+        if (weekIsExclusiveForMonth(weeks[i], monthKey)) {
+          labelIndex = i;
           break;
         }
+      }
+
+      if (labelIndex < 0) {
+        for (var j = 0; j < weeks.length; j += 1) {
+          if (weekContainsMonthStart(weeks[j], monthKey)) {
+            labelIndex = j;
+            break;
+          }
+        }
+      }
+
+      if (labelIndex < 0) {
+        for (var k = 0; k < weeks.length; k += 1) {
+          if (weekContainsMonth(weeks[k], monthKey)) {
+            labelIndex = k;
+            break;
+          }
+        }
+      }
+
+      if (labelIndex >= 0) {
+        labels[labelIndex] = getMonthLabel(monthKey);
       }
     }
 
