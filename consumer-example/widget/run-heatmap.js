@@ -6,9 +6,8 @@
     timeZone: "UTC",
   });
 
-  var MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
+  var MONTH_NAME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+    month: "long",
     timeZone: "UTC",
   });
 
@@ -295,15 +294,26 @@
     return formatDistanceKm(totalDistance) + " km ran in the last year";
   }
 
+  function formatOrdinalDay(dayNumber) {
+    var n = Number(dayNumber || 0);
+    var mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 13) return String(n) + "th";
+    var mod10 = n % 10;
+    if (mod10 === 1) return String(n) + "st";
+    if (mod10 === 2) return String(n) + "nd";
+    if (mod10 === 3) return String(n) + "rd";
+    return String(n) + "th";
+  }
+
   function formatTooltip(day) {
     var date = parseIsoDate(day.date);
     if (!date) return "";
-    var dateLabel = MONTH_DAY_FORMATTER.format(date);
+    var dateLabel = MONTH_NAME_FORMATTER.format(date) + " " + formatOrdinalDay(date.getUTCDate());
     var distance = Number(day.distance_m || 0);
     if (distance <= 0) {
-      return "No running on " + dateLabel;
+      return "No running on " + dateLabel + ".";
     }
-    return formatDistanceKm(distance) + " km on " + dateLabel;
+    return formatDistanceKm(distance) + " km on " + dateLabel + ".";
   }
 
   function createTooltip(root) {
