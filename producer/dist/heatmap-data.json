@@ -1,12 +1,6 @@
 {
-  "generatedAt": "2026-03-08T18:26:15.106Z",
+  "generatedAt": "2026-03-09T01:43:39.895Z",
   "days": [
-    {
-      "date": "2025-03-09",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
     {
       "date": "2025-03-10",
       "count": 0,
@@ -2187,6 +2181,12 @@
     },
     {
       "date": "2026-03-08",
+      "count": 0,
+      "distance_m": 0,
+      "moving_time_s": 0
+    },
+    {
+      "date": "2026-03-09",
       "count": 0,
       "distance_m": 0,
       "moving_time_s": 0
