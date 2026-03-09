@@ -131,7 +131,6 @@
       var year = Number(view.year);
       var yearStart = new Date(Date.UTC(year, 0, 1));
       var yearEnd = new Date(Date.UTC(year, 11, 31));
-      if (yearEnd > today) yearEnd = today;
       return { start: yearStart, end: yearEnd, mode: "year", year: year };
     }
 
