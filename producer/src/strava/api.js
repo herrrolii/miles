@@ -26,8 +26,10 @@ async function fetchActivitiesPage({ accessToken, page, perPage, afterEpochSecon
   const params = new URLSearchParams({
     page: String(page),
     per_page: String(perPage),
-    after: String(afterEpochSeconds),
   });
+  if (Number.isFinite(afterEpochSeconds) && afterEpochSeconds > 0) {
+    params.set("after", String(afterEpochSeconds));
+  }
 
   const response = await fetch(`${STRAVA_API_BASE}/athlete/activities?${params.toString()}`, {
     headers: {
@@ -102,7 +104,7 @@ function filterRunningActivities(activities) {
 
 async function fetchRunActivities({ clientId, clientSecret, tokenFilePath, days = 365 }) {
   const tokens = await ensureFreshTokens({ clientId, clientSecret, tokenFilePath });
-  const afterEpochSeconds = getAfterEpochSeconds(days);
+  const afterEpochSeconds = Number.isFinite(days) && days > 0 ? getAfterEpochSeconds(days) : null;
   const activities = await fetchAllActivities({
     accessToken: tokens.access_token,
     afterEpochSeconds,

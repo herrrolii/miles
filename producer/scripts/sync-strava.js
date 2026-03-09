@@ -21,15 +21,14 @@ async function main() {
     clientId,
     clientSecret,
     tokenFilePath,
-    days: 365,
   });
 
-  const payload = buildHeatmapPayload(runs, { days: 365 });
+  const payload = buildHeatmapPayload(runs);
   writeJsonFile(outputFilePath, payload);
 
   const activeDays = payload.days.filter((day) => day.count > 0).length;
   console.log(`Fetched ${runs.length} runs.`);
-  console.log(`Updated ${outputFilePath} (${activeDays} active days in last 365).`);
+  console.log(`Updated ${outputFilePath} (${activeDays} active days across ${payload.years.length} year(s)).`);
 }
 
 main().catch((error) => {

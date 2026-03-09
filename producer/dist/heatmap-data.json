@@ -1,72 +1,17 @@
 {
-  "generatedAt": "2026-03-10T18:40:13.318Z",
+  "generatedAt": "2026-03-09T21:00:29.180Z",
+  "years": [
+    2026,
+    2025
+  ],
+  "summary": {
+    "last12Months": {
+      "total_distance_m": 651617,
+      "total_runs": 73,
+      "total_moving_time_s": 234012
+    }
+  },
   "days": [
-    {
-      "date": "2025-03-11",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-12",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-13",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-14",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-15",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-16",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-17",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-18",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-19",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-20",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-21",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
     {
       "date": "2025-03-22",
       "count": 1,
@@ -2184,12 +2129,6 @@
       "count": 0,
       "distance_m": 0,
       "moving_time_s": 0
-    },
-    {
-      "date": "2026-03-10",
-      "count": 1,
-      "distance_m": 5009,
-      "moving_time_s": 1623
     }
   ]
 }

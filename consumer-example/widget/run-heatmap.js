@@ -1,14 +1,48 @@
 (function () {
   "use strict";
 
+  var MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    timeZone: "UTC",
+  });
+
+  var MONTH_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
+  var KM_FORMATTER = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+
   function toIsoDate(date) {
     return date.toISOString().slice(0, 10);
+  }
+
+  function parseIsoDate(dateString) {
+    var parsed = new Date(dateString + "T00:00:00.000Z");
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  function startOfTodayUtc() {
+    var today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    return today;
   }
 
   function startOfWeek(date) {
     var next = new Date(date);
     next.setUTCHours(0, 0, 0, 0);
     next.setUTCDate(next.getUTCDate() - next.getUTCDay());
+    return next;
+  }
+
+  function endOfWeek(date) {
+    var next = new Date(date);
+    next.setUTCHours(0, 0, 0, 0);
+    next.setUTCDate(next.getUTCDate() + (6 - next.getUTCDay()));
     return next;
   }
 
@@ -50,6 +84,16 @@
     };
   }
 
+  function zeroDay(date) {
+    return {
+      date: date,
+      count: 0,
+      distance_m: 0,
+      moving_time_s: 0,
+      inRange: false,
+    };
+  }
+
   function buildDaysMap(days) {
     var map = new Map();
     (days || []).forEach(function (day) {
@@ -58,28 +102,68 @@
     return map;
   }
 
-  function buildGrid(daysMap, totalDays) {
-    var end = new Date();
-    end.setUTCHours(0, 0, 0, 0);
+  function buildYearList(days, explicitYears) {
+    if (Array.isArray(explicitYears) && explicitYears.length > 0) {
+      return explicitYears.filter(function (year) {
+        return Number.isFinite(Number(year));
+      });
+    }
 
+    var years = new Set();
+    (days || []).forEach(function (day) {
+      if (!day || !day.date) return;
+      years.add(Number(day.date.slice(0, 4)));
+    });
+
+    if (!years.size) {
+      years.add(startOfTodayUtc().getUTCFullYear());
+    }
+
+    return Array.from(years).sort(function (a, b) {
+      return b - a;
+    });
+  }
+
+  function buildViewRange(view) {
+    var today = startOfTodayUtc();
+
+    if (view && view.type === "year") {
+      var year = Number(view.year);
+      var yearStart = new Date(Date.UTC(year, 0, 1));
+      var yearEnd = new Date(Date.UTC(year, 11, 31));
+      if (yearEnd > today) yearEnd = today;
+      return { start: yearStart, end: yearEnd, mode: "year", year: year };
+    }
+
+    var end = today;
     var start = new Date(end);
-    start.setUTCDate(start.getUTCDate() - (totalDays - 1));
+    start.setUTCDate(start.getUTCDate() - 364);
+    return { start: start, end: end, mode: "last12Months" };
+  }
 
+  function buildGrid(daysMap, viewRange) {
+    var start = viewRange.start;
+    var end = viewRange.end;
     var gridStart = startOfWeek(start);
+    var gridEnd = endOfWeek(end);
     var cursor = new Date(gridStart);
     var weeks = [];
     var currentWeek = [];
+    var visibleDays = [];
 
-    while (cursor <= end) {
+    while (cursor <= gridEnd) {
       var date = toIsoDate(cursor);
-      currentWeek.push(
-        daysMap.get(date) || {
-          date: date,
-          count: 0,
-          distance_m: 0,
-          moving_time_s: 0,
-        }
-      );
+      var day = daysMap.get(date) || zeroDay(date);
+      var inRange = cursor >= start && cursor <= end;
+      var enriched = {
+        date: day.date,
+        count: Number(day.count || 0),
+        distance_m: Number(day.distance_m || 0),
+        moving_time_s: Number(day.moving_time_s || 0),
+        inRange: inRange,
+      };
+      currentWeek.push(enriched);
+      if (inRange) visibleDays.push(enriched);
 
       if (currentWeek.length === 7) {
         weeks.push(currentWeek);
@@ -93,14 +177,105 @@
       weeks.push(currentWeek);
     }
 
-    return weeks;
+    return {
+      weeks: weeks,
+      visibleDays: visibleDays,
+    };
+  }
+
+  function findFirstInRangeDay(week) {
+    for (var i = 0; i < week.length; i += 1) {
+      if (week[i].inRange) return week[i];
+    }
+    return null;
+  }
+
+  function getMonthLabel(day) {
+    var date = parseIsoDate(day.date);
+    if (!date) return "";
+    return MONTH_FORMATTER.format(date);
+  }
+
+  function buildMonthLabels(weeks) {
+    var labels = new Array(weeks.length).fill("");
+
+    for (var i = 0; i < weeks.length; i += 1) {
+      var week = weeks[i];
+      var firstInRange = findFirstInRangeDay(week);
+      if (!firstInRange) continue;
+
+      var firstDate = parseIsoDate(firstInRange.date);
+      if (!firstDate) continue;
+
+      if (i === 0) {
+        labels[i] = getMonthLabel(firstInRange);
+        continue;
+      }
+
+      for (var j = 0; j < week.length; j += 1) {
+        var day = week[j];
+        if (!day.inRange) continue;
+        var date = parseIsoDate(day.date);
+        if (!date) continue;
+        if (date.getUTCDate() === 1) {
+          labels[i] = getMonthLabel(day);
+          break;
+        }
+      }
+    }
+
+    return labels;
+  }
+
+  function formatDistanceKm(distanceM) {
+    var km = Number(distanceM || 0) / 1000;
+    return KM_FORMATTER.format(km);
+  }
+
+  function formatSummary(viewRange, visibleDays) {
+    var totalDistance = visibleDays.reduce(function (sum, day) {
+      return sum + Number(day.distance_m || 0);
+    }, 0);
+
+    if (viewRange.mode === "year") {
+      return formatDistanceKm(totalDistance) + " km ran in " + String(viewRange.year);
+    }
+
+    return formatDistanceKm(totalDistance) + " km ran in the last year";
   }
 
   function formatTooltip(day) {
-    var runLabel = day.count === 1 ? "run" : "runs";
-    var km = (Number(day.distance_m || 0) / 1000).toFixed(1);
-    var minutes = Math.round(Number(day.moving_time_s || 0) / 60);
-    return day.date + ": " + day.count + " " + runLabel + ", " + km + " km, " + minutes + " min";
+    var date = parseIsoDate(day.date);
+    if (!date) return "";
+    var dateLabel = MONTH_DAY_FORMATTER.format(date);
+    var distance = Number(day.distance_m || 0);
+    if (distance <= 0) {
+      return "No running on " + dateLabel;
+    }
+    return formatDistanceKm(distance) + " km on " + dateLabel;
+  }
+
+  function createTooltip(root) {
+    var tooltip = document.createElement("div");
+    tooltip.className = "rh-tooltip";
+    root.appendChild(tooltip);
+    return tooltip;
+  }
+
+  function showTooltip(root, tooltip, event, content) {
+    tooltip.textContent = content;
+    tooltip.classList.add("is-visible");
+
+    var rootRect = root.getBoundingClientRect();
+    var left = event.clientX - rootRect.left + 10;
+    var top = event.clientY - rootRect.top - 36;
+
+    tooltip.style.left = left + "px";
+    tooltip.style.top = top + "px";
+  }
+
+  function hideTooltip(tooltip) {
+    tooltip.classList.remove("is-visible");
   }
 
   function renderError(container, message) {
@@ -111,36 +286,16 @@
     container.appendChild(error);
   }
 
-  function renderHeatmap(container, payload, options) {
-    var days = (payload && payload.days) || [];
-    var theme = (options && options.theme) || "light";
-    var totalDays = (options && options.days) || 365;
-    var intensity = createIntensityResolver(days);
-    var weeks = buildGrid(buildDaysMap(days), totalDays);
+  function resolveInitialView(years, options) {
+    var defaultYear = Number(options && options.defaultYear);
+    if (defaultYear && years.indexOf(defaultYear) >= 0) {
+      return { type: "year", year: defaultYear };
+    }
 
-    container.innerHTML = "";
+    return { type: "last12Months" };
+  }
 
-    var root = document.createElement("div");
-    root.className = "rh-root rh-theme-" + theme;
-
-    var grid = document.createElement("div");
-    grid.className = "rh-grid";
-
-    weeks.forEach(function (week) {
-      var weekEl = document.createElement("div");
-      weekEl.className = "rh-week";
-
-      week.forEach(function (day) {
-        var cell = document.createElement("div");
-        cell.className = "rh-cell rh-level-" + intensity(day);
-        cell.title = formatTooltip(day);
-        cell.setAttribute("aria-label", formatTooltip(day));
-        weekEl.appendChild(cell);
-      });
-
-      grid.appendChild(weekEl);
-    });
-
+  function renderLegend(root) {
     var legend = document.createElement("div");
     legend.className = "rh-legend";
     legend.innerHTML =
@@ -151,10 +306,167 @@
       '<span class="rh-cell rh-level-3"></span>' +
       '<span class="rh-cell rh-level-4"></span>' +
       "<span>More</span>";
-
-    root.appendChild(grid);
     root.appendChild(legend);
-    container.appendChild(root);
+  }
+
+  function renderHeatmap(container, payload, options) {
+    var days = (payload && payload.days) || [];
+    var years = buildYearList(days, payload && payload.years);
+    var daysMap = buildDaysMap(days);
+    var theme = (options && options.theme) || "light";
+    var state = {
+      view: resolveInitialView(years, options || {}),
+    };
+
+    function renderView() {
+      var viewRange = buildViewRange(state.view);
+      var gridData = buildGrid(daysMap, viewRange);
+      var visibleDays = gridData.visibleDays;
+      var intensity = createIntensityResolver(visibleDays);
+      var monthLabels = buildMonthLabels(gridData.weeks);
+
+      container.innerHTML = "";
+
+      var root = document.createElement("div");
+      root.className = "rh-root rh-theme-" + theme;
+
+      var header = document.createElement("h2");
+      header.className = "rh-title";
+      header.textContent = formatSummary(viewRange, visibleDays);
+      root.appendChild(header);
+
+      var main = document.createElement("div");
+      main.className = "rh-main";
+
+      var graphWrap = document.createElement("div");
+      graphWrap.className = "rh-graph-wrap";
+
+      var months = document.createElement("div");
+      months.className = "rh-months";
+      monthLabels.forEach(function (label) {
+        var month = document.createElement("span");
+        month.className = "rh-month";
+        month.textContent = label;
+        months.appendChild(month);
+      });
+      graphWrap.appendChild(months);
+
+      var graphBody = document.createElement("div");
+      graphBody.className = "rh-graph-body";
+
+      var weekdays = document.createElement("div");
+      weekdays.className = "rh-weekdays";
+      weekdays.innerHTML = "<span>Mon</span><span>Wed</span><span>Fri</span>";
+      graphBody.appendChild(weekdays);
+
+      var grid = document.createElement("div");
+      grid.className = "rh-grid";
+      grid.setAttribute("role", "grid");
+      gridData.weeks.forEach(function (week) {
+        var weekEl = document.createElement("div");
+        weekEl.className = "rh-week";
+
+        week.forEach(function (day) {
+          var cell = document.createElement("div");
+          cell.className = "rh-cell rh-level-" + intensity(day);
+          if (!day.inRange) {
+            cell.classList.add("rh-cell-muted");
+          } else {
+            var tooltipText = formatTooltip(day);
+            cell.setAttribute("tabindex", "0");
+            cell.setAttribute("aria-label", tooltipText);
+            cell.dataset.tooltip = tooltipText;
+          }
+          weekEl.appendChild(cell);
+        });
+
+        grid.appendChild(weekEl);
+      });
+      graphBody.appendChild(grid);
+      graphWrap.appendChild(graphBody);
+
+      renderLegend(graphWrap);
+      main.appendChild(graphWrap);
+
+      var yearsNav = document.createElement("div");
+      yearsNav.className = "rh-years";
+
+      function makeYearButton(label, isActive, onClick) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "rh-year" + (isActive ? " is-active" : "");
+        button.textContent = label;
+        button.addEventListener("click", onClick);
+        yearsNav.appendChild(button);
+      }
+
+      makeYearButton("Last 12 months", state.view.type === "last12Months", function () {
+        state.view = { type: "last12Months" };
+        renderView();
+      });
+
+      years.forEach(function (year) {
+        makeYearButton(
+          String(year),
+          state.view.type === "year" && Number(state.view.year) === Number(year),
+          function () {
+            state.view = { type: "year", year: Number(year) };
+            renderView();
+          }
+        );
+      });
+
+      main.appendChild(yearsNav);
+      root.appendChild(main);
+
+      var tooltip = createTooltip(root);
+      root.addEventListener("mousemove", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (!target.classList.contains("rh-cell")) return;
+        if (!target.dataset.tooltip) return;
+        showTooltip(root, tooltip, event, target.dataset.tooltip);
+      });
+      root.addEventListener("mouseover", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (!target.classList.contains("rh-cell")) return;
+        if (!target.dataset.tooltip) return;
+        showTooltip(root, tooltip, event, target.dataset.tooltip);
+      });
+      root.addEventListener("mouseout", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.classList.contains("rh-cell")) {
+          hideTooltip(tooltip);
+        }
+      });
+      root.addEventListener("focusin", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (!target.classList.contains("rh-cell")) return;
+        if (!target.dataset.tooltip) return;
+
+        var rect = target.getBoundingClientRect();
+        showTooltip(
+          root,
+          tooltip,
+          { clientX: rect.left + rect.width / 2, clientY: rect.top },
+          target.dataset.tooltip
+        );
+      });
+      root.addEventListener("focusout", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.classList.contains("rh-cell")) {
+          hideTooltip(tooltip);
+        }
+      });
+
+      container.appendChild(root);
+    }
+
+    renderView();
   }
 
   function loadAndRender(container, options) {
@@ -188,7 +500,7 @@
 
     class RunHeatmapElement extends HTMLElement {
       static get observedAttributes() {
-        return ["data-url", "theme", "days"];
+        return ["data-url", "theme", "default-year"];
       }
 
       connectedCallback() {
@@ -202,11 +514,10 @@
       }
 
       render() {
-        var days = Number(this.getAttribute("days") || 365);
         var options = {
           dataUrl: this.getAttribute("data-url") || "/heatmap-data.json",
           theme: this.getAttribute("theme") || "light",
-          days: Number.isFinite(days) && days > 0 ? days : 365,
+          defaultYear: this.getAttribute("default-year"),
         };
         loadAndRender(this, options);
       }
