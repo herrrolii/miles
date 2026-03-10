@@ -44,15 +44,16 @@
 
 .rh-layout {
   align-items: flex-start;
-  display: flex;
+  display: grid;
   gap: 20px;
   max-width: 100%;
-  width: fit-content;
+  grid-template-columns: minmax(0, 1fr) 96px;
+  width: 100%;
 }
 
 .rh-content {
-  flex: 0 1 auto;
   min-width: 0;
+  width: 100%;
 }
 
 .rh-root .rh-title {
@@ -131,7 +132,7 @@
   display: block;
   max-width: 100%;
   padding: 8px 16px 10px;
-  width: fit-content;
+  width: 100%;
 }
 
 .rh-graph-wrap {
@@ -255,37 +256,6 @@
   line-height: 1;
   margin-top: 6px;
   padding-right: 12px;
-}
-
-@media (max-width: 760px) {
-  .rh-layout {
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .rh-content {
-    flex: 1 1 auto;
-    width: 100%;
-  }
-
-  .rh-years {
-    position: static;
-    width: auto;
-  }
-
-  .rh-year-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-height: none;
-    overflow: visible;
-    padding-right: 0;
-  }
-
-  .rh-year-item {
-    margin: 0;
-  }
 }
 
 .rh-error {
