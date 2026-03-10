@@ -5,14 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Website Consumer Example</title>
     <link rel="stylesheet" href="/widget/run-heatmap.css" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: #ffffff;
+      }
+
+      .demo-mount {
+        max-width: 100%;
+        width: fit-content;
+      }
+
+      .demo-mount run-heatmap {
+        display: block;
+        max-width: 100%;
+        width: fit-content;
+      }
+    </style>
   </head>
   <body>
-    <h1>My Website Running Heatmap</h1>
-
-    <run-heatmap
-      data-url="https://your-data-host.example/heatmap-data.json"
-      theme="light"
-    ></run-heatmap>
+    <div class="demo-mount">
+      <run-heatmap
+        data-url="https://your-data-host.example/heatmap-data.json"
+        theme="light"
+      ></run-heatmap>
+    </div>
 
     <script src="/widget/run-heatmap.js"></script>
   </body>

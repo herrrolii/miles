@@ -18,8 +18,10 @@
   box-sizing: border-box;
   padding: 0;
   position: relative;
+  display: block;
   max-width: 100%;
-  width: 100%;
+  min-width: 0;
+  width: fit-content;
 }
 
 .rh-root,
@@ -45,12 +47,11 @@
   display: flex;
   gap: 20px;
   max-width: 100%;
-  width: 100%;
+  width: fit-content;
 }
 
 .rh-content {
   flex: 0 1 auto;
-  max-width: calc(100% - 116px);
   min-width: 0;
 }
 
