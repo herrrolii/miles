@@ -1,6 +1,8 @@
 # Miles
 
 A GitHub-style contribution heatmap widget for your Strava running data.  
+
+![Miles widget preview](https://github.com/user-attachments/assets/5c99b2c5-565a-49dc-b0c0-b4625ffe34eb)
   
 This repo is split into two parts:
 
@@ -97,7 +99,7 @@ Theme options:
 - `theme="light"`
 - `theme="dark"`
 
-If you serve the CSS from a different URL than the JS file's folder, set an explicit override:
+If you want to serve `run-heatmap.css` from a different URL than the folder that serves `run-heatmap.js`, set an explicit override with the `css-href` attribute:
 
 ```html
 <run-heatmap
