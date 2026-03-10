@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  var DEFAULT_WIDGET_CSS_URL = resolveDefaultWidgetCssUrl();
+
   var MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
     month: "short",
     timeZone: "UTC",
@@ -15,6 +17,39 @@
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
+
+  function resolveDefaultWidgetCssUrl() {
+    if (document.currentScript && document.currentScript.src) {
+      return new URL("./run-heatmap.css", document.currentScript.src).toString();
+    }
+    return "run-heatmap.css";
+  }
+
+  function ensureShadowMount(host, options) {
+    var shadowRoot = host.shadowRoot || host.attachShadow({ mode: "open" });
+    var styleHref = (options && options.cssHref) || DEFAULT_WIDGET_CSS_URL;
+    var stylesheet = shadowRoot.querySelector('link[data-rh-styles="true"]');
+    var mount = shadowRoot.querySelector('[data-rh-mount="true"]');
+
+    if (!stylesheet) {
+      stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.setAttribute("data-rh-styles", "true");
+      shadowRoot.appendChild(stylesheet);
+    }
+
+    if (stylesheet.getAttribute("href") !== styleHref) {
+      stylesheet.setAttribute("href", styleHref);
+    }
+
+    if (!mount) {
+      mount = document.createElement("div");
+      mount.setAttribute("data-rh-mount", "true");
+      shadowRoot.appendChild(mount);
+    }
+
+    return mount;
+  }
 
   function toIsoDate(date) {
     return date.toISOString().slice(0, 10);
@@ -601,7 +636,7 @@
 
     class RunHeatmapElement extends HTMLElement {
       static get observedAttributes() {
-        return ["data-url", "theme", "default-year"];
+        return ["data-url", "theme", "default-year", "css-href"];
       }
 
       connectedCallback() {
@@ -619,8 +654,9 @@
           dataUrl: this.getAttribute("data-url") || "/heatmap-data.json",
           theme: this.getAttribute("theme") || "light",
           defaultYear: this.getAttribute("default-year"),
+          cssHref: this.getAttribute("css-href") || DEFAULT_WIDGET_CSS_URL,
         };
-        loadAndRender(this, options);
+        loadAndRender(ensureShadowMount(this, options), options);
       }
     }
 

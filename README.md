@@ -79,14 +79,33 @@ Your website should read the generated JSON at runtime.
 1. Copy the contents of `consumer-example/widget/` into your website project's static assets so they are served as:
 - `/widget/run-heatmap.js`
 - `/widget/run-heatmap.css`
-2. Paste this snippet into the target HTML page:
+2. Keep both files in the same folder. The widget JS will automatically load `run-heatmap.css` into the component's Shadow DOM.
+3. Paste this snippet into the target HTML page:
 
 Example web component usage:
 
 ```html
-<link rel="stylesheet" href="/widget/run-heatmap.css" />
-<run-heatmap data-url="https://your-data-host.example/heatmap-data.json"></run-heatmap>
+<run-heatmap
+  data-url="https://your-data-host.example/heatmap-data.json"
+  theme="light"
+></run-heatmap>
 <script src="/widget/run-heatmap.js"></script>
+```
+
+Theme options:
+
+- `theme="light"`
+- `theme="dark"`
+
+If you serve the CSS from a different URL than the JS file's folder, set an explicit override:
+
+```html
+<run-heatmap
+  data-url="https://your-data-host.example/heatmap-data.json"
+  theme="dark"
+  css-href="/assets/widgets/run-heatmap.css"
+></run-heatmap>
+<script src="/assets/widgets/run-heatmap.js"></script>
 ```
 
 You can check `consumer-example/` as a complete reference example.
