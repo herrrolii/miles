@@ -90,6 +90,7 @@ Example web component usage:
 <run-heatmap
   data-url="https://your-data-host.example/heatmap-data.json"
   theme="light"
+  unit="km"
 ></run-heatmap>
 <script src="/widget/run-heatmap.js"></script>
 ```
@@ -99,12 +100,18 @@ Theme options:
 - `theme="light"`
 - `theme="dark"`
 
+Unit options:
+
+- `unit="km"`
+- `unit="mi"`
+
 If you want to serve `run-heatmap.css` from a different URL than the folder that serves `run-heatmap.js`, set an explicit override with the `css-href` attribute:
 
 ```html
 <run-heatmap
   data-url="https://your-data-host.example/heatmap-data.json"
   theme="dark"
+  unit="mi"
   css-href="/assets/widgets/run-heatmap.css"
 ></run-heatmap>
 <script src="/assets/widgets/run-heatmap.js"></script>

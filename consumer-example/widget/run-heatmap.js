@@ -13,10 +13,13 @@
     timeZone: "UTC",
   });
 
-  var KM_FORMATTER = new Intl.NumberFormat("en-US", {
+  var DISTANCE_FORMATTER = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
+
+  var METERS_PER_KILOMETER = 1000;
+  var METERS_PER_MILE = 1609.344;
 
   function resolveDefaultWidgetCssUrl() {
     if (document.currentScript && document.currentScript.src) {
@@ -312,21 +315,28 @@
     return labels;
   }
 
-  function formatDistanceKm(distanceM) {
-    var km = Number(distanceM || 0) / 1000;
-    return KM_FORMATTER.format(km);
+  function resolveDisplayUnit(unit) {
+    return String(unit || "km").toLowerCase() === "mi" ? "mi" : "km";
   }
 
-  function formatSummary(viewRange, visibleDays) {
+  function formatDistance(distanceM, unit) {
+    var resolvedUnit = resolveDisplayUnit(unit);
+    var divisor = resolvedUnit === "mi" ? METERS_PER_MILE : METERS_PER_KILOMETER;
+    return DISTANCE_FORMATTER.format(Number(distanceM || 0) / divisor);
+  }
+
+  function formatSummary(viewRange, visibleDays, unit) {
     var totalDistance = visibleDays.reduce(function (sum, day) {
       return sum + Number(day.distance_m || 0);
     }, 0);
+    var resolvedUnit = resolveDisplayUnit(unit);
+    var distanceLabel = formatDistance(totalDistance, resolvedUnit) + " " + resolvedUnit;
 
     if (viewRange.mode === "year") {
-      return formatDistanceKm(totalDistance) + " km ran in " + String(viewRange.year);
+      return distanceLabel + " ran in " + String(viewRange.year);
     }
 
-    return formatDistanceKm(totalDistance) + " km ran in the last year";
+    return distanceLabel + " ran in the last year";
   }
 
   function formatOrdinalDay(dayNumber) {
@@ -340,15 +350,16 @@
     return String(n) + "th";
   }
 
-  function formatTooltip(day) {
+  function formatTooltip(day, unit) {
     var date = parseIsoDate(day.date);
     if (!date) return "";
     var dateLabel = MONTH_NAME_FORMATTER.format(date) + " " + formatOrdinalDay(date.getUTCDate());
     var distance = Number(day.distance_m || 0);
+    var resolvedUnit = resolveDisplayUnit(unit);
     if (distance <= 0) {
       return "No running on " + dateLabel + ".";
     }
-    return formatDistanceKm(distance) + " km on " + dateLabel + ".";
+    return formatDistance(distance, resolvedUnit) + " " + resolvedUnit + " on " + dateLabel + ".";
   }
 
   function createTooltip(root) {
@@ -410,6 +421,7 @@
     var years = buildYearList(days, payload && payload.years);
     var daysMap = buildDaysMap(days);
     var theme = (options && options.theme) || "light";
+    var unit = resolveDisplayUnit(options && options.unit);
     var state = {
       view: resolveInitialView(years, options || {}),
     };
@@ -434,7 +446,7 @@
 
       var header = document.createElement("h2");
       header.className = "rh-title";
-      header.textContent = formatSummary(viewRange, visibleDays);
+      header.textContent = formatSummary(viewRange, visibleDays, unit);
       content.appendChild(header);
 
       var graphWrap = document.createElement("div");
@@ -477,7 +489,7 @@
           if (!day.inRange) {
             cell.classList.add("rh-cell-muted");
           } else {
-            var tooltipText = formatTooltip(day);
+            var tooltipText = formatTooltip(day, unit);
             cell.setAttribute("tabindex", "0");
             cell.setAttribute("aria-label", tooltipText);
             cell.dataset.tooltip = tooltipText;
@@ -636,7 +648,7 @@
 
     class RunHeatmapElement extends HTMLElement {
       static get observedAttributes() {
-        return ["data-url", "theme", "default-year", "css-href"];
+        return ["data-url", "theme", "unit", "default-year", "css-href"];
       }
 
       connectedCallback() {
@@ -653,6 +665,7 @@
         var options = {
           dataUrl: this.getAttribute("data-url") || "/heatmap-data.json",
           theme: this.getAttribute("theme") || "light",
+          unit: this.getAttribute("unit") || "km",
           defaultYear: this.getAttribute("default-year"),
           cssHref: this.getAttribute("css-href") || DEFAULT_WIDGET_CSS_URL,
         };

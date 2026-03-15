@@ -21,6 +21,11 @@ Set the widget theme with:
 - `theme="light"`
 - `theme="dark"`
 
+Set the distance unit with:
+
+- `unit="km"`
+- `unit="mi"`
+
 ## Why this is separate
 
 This example is the **consumer side**.
