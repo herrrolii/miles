@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-03-16T12:58:50.894Z",
+  "generatedAt": "2026-03-16T18:54:37.682Z",
   "years": [
     2026,
     2025
   ],
   "summary": {
     "last12Months": {
-      "total_distance_m": 666639,
-      "total_runs": 77,
-      "total_moving_time_s": 239610
+      "total_distance_m": 671646,
+      "total_runs": 78,
+      "total_moving_time_s": 241267
     }
   },
   "days": [
@@ -2168,9 +2168,9 @@
     },
     {
       "date": "2026-03-16",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5007,
+      "moving_time_s": 1657
     }
   ]
 }
