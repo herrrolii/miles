@@ -1,59 +1,17 @@
 {
-  "generatedAt": "2026-03-21T18:28:44.198Z",
+  "generatedAt": "2026-03-22T01:47:52.417Z",
   "years": [
     2026,
     2025
   ],
   "summary": {
     "last12Months": {
-      "total_distance_m": 676653,
-      "total_runs": 79,
-      "total_moving_time_s": 243184
+      "total_distance_m": 893511,
+      "total_runs": 114,
+      "total_moving_time_s": 323460
     }
   },
   "days": [
-    {
-      "date": "2025-03-22",
-      "count": 1,
-      "distance_m": 2479,
-      "moving_time_s": 869
-    },
-    {
-      "date": "2025-03-23",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-24",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-25",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-26",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-27",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
-    {
-      "date": "2025-03-28",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
     {
       "date": "2025-03-29",
       "count": 1,
@@ -1262,9 +1220,9 @@
     },
     {
       "date": "2025-10-16",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 10020,
+      "moving_time_s": 3362
     },
     {
       "date": "2025-10-17",
@@ -1274,213 +1232,213 @@
     },
     {
       "date": "2025-10-18",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 8013,
+      "moving_time_s": 2858
     },
     {
       "date": "2025-10-19",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 6009,
+      "moving_time_s": 2063
     },
     {
       "date": "2025-10-20",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 6012,
+      "moving_time_s": 2175
     },
     {
       "date": "2025-10-21",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 23015,
+      "moving_time_s": 8668
     },
     {
       "date": "2025-10-22",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5001,
+      "moving_time_s": 1687
     },
     {
       "date": "2025-10-23",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 6008,
+      "moving_time_s": 2134
     },
     {
       "date": "2025-10-24",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5001,
+      "moving_time_s": 2076
     },
     {
       "date": "2025-10-25",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5009,
+      "moving_time_s": 2413
     },
     {
       "date": "2025-10-26",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5006,
+      "moving_time_s": 2114
     },
     {
       "date": "2025-10-27",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5007,
+      "moving_time_s": 1887
     },
     {
       "date": "2025-10-28",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5008,
+      "moving_time_s": 1958
     },
     {
       "date": "2025-10-29",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5004,
+      "moving_time_s": 1738
     },
     {
       "date": "2025-10-30",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5001,
+      "moving_time_s": 1703
     },
     {
       "date": "2025-10-31",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5004,
+      "moving_time_s": 1819
     },
     {
       "date": "2025-11-01",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5013,
+      "moving_time_s": 1855
     },
     {
       "date": "2025-11-02",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5010,
+      "moving_time_s": 1905
     },
     {
       "date": "2025-11-03",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5009,
+      "moving_time_s": 2013
     },
     {
       "date": "2025-11-04",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5009,
+      "moving_time_s": 2011
     },
     {
       "date": "2025-11-05",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5020,
+      "moving_time_s": 1866
     },
     {
       "date": "2025-11-06",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5011,
+      "moving_time_s": 1732
     },
     {
       "date": "2025-11-07",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5013,
+      "moving_time_s": 1741
     },
     {
       "date": "2025-11-08",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5022,
+      "moving_time_s": 1804
     },
     {
       "date": "2025-11-09",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5007,
+      "moving_time_s": 1856
     },
     {
       "date": "2025-11-10",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5013,
+      "moving_time_s": 2007
     },
     {
       "date": "2025-11-11",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5006,
+      "moving_time_s": 1721
     },
     {
       "date": "2025-11-12",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5005,
+      "moving_time_s": 1983
     },
     {
       "date": "2025-11-13",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5003,
+      "moving_time_s": 1795
     },
     {
       "date": "2025-11-14",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5021,
+      "moving_time_s": 1837
     },
     {
       "date": "2025-11-15",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 10009,
+      "moving_time_s": 3662
     },
     {
       "date": "2025-11-16",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5007,
+      "moving_time_s": 1694
     },
     {
       "date": "2025-11-17",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5008,
+      "moving_time_s": 1677
     },
     {
       "date": "2025-11-18",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5006,
+      "moving_time_s": 1573
     },
     {
       "date": "2025-11-19",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5011,
+      "moving_time_s": 1980
     },
     {
       "date": "2025-11-20",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 10009,
+      "moving_time_s": 3627
     },
     {
       "date": "2025-11-21",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
+      "count": 1,
+      "distance_m": 5007,
+      "moving_time_s": 2151
     },
     {
       "date": "2025-11-22",
@@ -2198,6 +2156,12 @@
     },
     {
       "date": "2026-03-21",
+      "count": 0,
+      "distance_m": 0,
+      "moving_time_s": 0
+    },
+    {
+      "date": "2026-03-22",
       "count": 0,
       "distance_m": 0,
       "moving_time_s": 0
