@@ -2,8 +2,9 @@
 
 A GitHub-style contribution heatmap widget for your Strava running data.  
 
-![Miles widget preview](https://github.com/user-attachments/assets/5c99b2c5-565a-49dc-b0c0-b4625ffe34eb)
-  
+![Miles widget preview](https://github.com/user-attachments/assets/8130d266-ca97-4241-839b-19d4266fd47a)
+> the green border and black background are not part of the widget styling.
+
 This repo is split into two parts:
 
 1. `producer/`  
