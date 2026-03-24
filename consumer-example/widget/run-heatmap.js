@@ -83,23 +83,83 @@
     return next;
   }
 
-  function percentile(sortedValues, fraction) {
-    if (!sortedValues.length) return 0;
-    var index = Math.floor((sortedValues.length - 1) * fraction);
-    return sortedValues[index];
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
-  function createIntensityResolver(days) {
-    var distances = (days || [])
-      .map(function (day) {
-        return Number(day.distance_m || 0);
-      })
-      .filter(function (distance) {
-        return distance > 0;
-      })
+  function resolvePalette(activeLevels) {
+    if (activeLevels <= 1) return [2];
+    if (activeLevels === 2) return [1, 4];
+    if (activeLevels === 3) return [1, 2, 4];
+    return [1, 2, 3, 4];
+  }
+
+  function resolveDistanceDivisor(unit) {
+    return resolveDisplayUnit(unit) === "mi" ? METERS_PER_MILE : METERS_PER_KILOMETER;
+  }
+
+  function quantizeDistanceForClassification(distanceM, unit) {
+    var divisor = resolveDistanceDivisor(unit);
+    var displayDistance = Number(distanceM || 0) / divisor;
+    return Math.round(displayDistance * 10) / 10;
+  }
+
+  function buildPositiveDistancePoints(days, unit) {
+    var uniqueDistances = new Set();
+
+    (days || []).forEach(function (day) {
+      var distance = quantizeDistanceForClassification(day && day.distance_m, unit);
+      if (distance <= 0) return;
+      uniqueDistances.add(distance);
+    });
+
+    return Array.from(uniqueDistances)
       .sort(function (a, b) {
         return a - b;
       });
+  }
+
+  function selectActiveLevels(distances) {
+    if (distances.length <= 1) return 1;
+    var minDistance = distances[0];
+    var maxDistance = distances[distances.length - 1];
+    var spreadRatio = maxDistance / minDistance;
+    if (!Number.isFinite(spreadRatio) || spreadRatio <= 1.15) return 1;
+    return clamp(Math.round(Math.log(spreadRatio) / Math.log(2)) + 1, 1, 4);
+  }
+
+  function quantileValue(sortedValues, fraction) {
+    if (!sortedValues.length) return 0;
+    var index = Math.floor((sortedValues.length - 1) * clamp(fraction, 0, 1));
+    return sortedValues[index];
+  }
+
+  function buildBoundaries(distances, activeLevels) {
+    if (activeLevels <= 1) return [];
+
+    var minimumBoundaryRatio = 1.2;
+    var boundaries = [];
+
+    for (var i = 1; i < activeLevels; i += 1) {
+      var candidate = quantileValue(distances, i / activeLevels);
+      if (candidate <= distances[0]) continue;
+
+      if (!boundaries.length) {
+        boundaries.push(candidate);
+        continue;
+      }
+
+      var previousBoundary = boundaries[boundaries.length - 1];
+      if (candidate / previousBoundary >= minimumBoundaryRatio) {
+        boundaries.push(candidate);
+      }
+    }
+
+    return boundaries;
+  }
+
+  function createIntensityResolver(days, unit) {
+    var distances = buildPositiveDistancePoints(days, unit);
 
     if (!distances.length) {
       return function () {
@@ -107,17 +167,21 @@
       };
     }
 
-    var q1 = percentile(distances, 0.25);
-    var q2 = percentile(distances, 0.5);
-    var q3 = percentile(distances, 0.75);
+    var activeLevels = selectActiveLevels(distances);
+    var boundaries = buildBoundaries(distances, activeLevels);
+    var palette = resolvePalette(boundaries.length + 1);
 
     return function (day) {
-      var distance = Number((day && day.distance_m) || 0);
+      var distance = quantizeDistanceForClassification(day && day.distance_m, unit);
       if (distance <= 0) return 0;
-      if (distance <= q1) return 1;
-      if (distance <= q2) return 2;
-      if (distance <= q3) return 3;
-      return 4;
+
+      for (var boundaryIndex = 0; boundaryIndex < boundaries.length; boundaryIndex += 1) {
+        if (distance <= boundaries[boundaryIndex]) {
+          return palette[boundaryIndex];
+        }
+      }
+
+      return palette[palette.length - 1];
     };
   }
 
@@ -321,7 +385,7 @@
 
   function formatDistance(distanceM, unit) {
     var resolvedUnit = resolveDisplayUnit(unit);
-    var divisor = resolvedUnit === "mi" ? METERS_PER_MILE : METERS_PER_KILOMETER;
+    var divisor = resolveDistanceDivisor(resolvedUnit);
     return DISTANCE_FORMATTER.format(Number(distanceM || 0) / divisor);
   }
 
@@ -430,7 +494,7 @@
       var viewRange = buildViewRange(state.view);
       var gridData = buildGrid(daysMap, viewRange);
       var visibleDays = gridData.visibleDays;
-      var intensity = createIntensityResolver(visibleDays);
+      var intensity = createIntensityResolver(visibleDays, unit);
       var monthLabels = buildMonthLabels(gridData.weeks);
 
       container.innerHTML = "";
