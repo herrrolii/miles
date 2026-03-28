@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T18:49:07.644Z",
+  "generatedAt": "2026-03-28T01:45:11.550Z",
   "years": [
     2026,
     2025
@@ -2195,6 +2195,12 @@
       "count": 1,
       "distance_m": 5003,
       "moving_time_s": 1877
+    },
+    {
+      "date": "2026-03-28",
+      "count": 0,
+      "distance_m": 0,
+      "moving_time_s": 0
     }
   ]
 }
