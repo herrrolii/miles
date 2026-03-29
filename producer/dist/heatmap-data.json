@@ -1,29 +1,17 @@
 {
-  "generatedAt": "2026-03-28T18:32:09.760Z",
+  "generatedAt": "2026-03-29T01:56:06.357Z",
   "years": [
     2026,
     2025
   ],
   "summary": {
     "last12Months": {
-      "total_distance_m": 1179166,
-      "total_runs": 177,
-      "total_moving_time_s": 423683
+      "total_distance_m": 1174287,
+      "total_runs": 176,
+      "total_moving_time_s": 422180
     }
   },
   "days": [
-    {
-      "date": "2025-03-29",
-      "count": 1,
-      "distance_m": 4879,
-      "moving_time_s": 1503
-    },
-    {
-      "date": "2025-03-30",
-      "count": 0,
-      "distance_m": 0,
-      "moving_time_s": 0
-    },
     {
       "date": "2025-03-31",
       "count": 1,
@@ -2201,6 +2189,12 @@
       "count": 1,
       "distance_m": 5003,
       "moving_time_s": 1866
+    },
+    {
+      "date": "2026-03-29",
+      "count": 0,
+      "distance_m": 0,
+      "moving_time_s": 0
     }
   ]
 }
